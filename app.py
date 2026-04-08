@@ -1,21 +1,22 @@
 """
-AI Conversion Booster - Backend API (Final Optimized Version)
-FastAPI + BeautifulSoup + OpenAI GPT-4o-mini
+AI Conversion Booster - Final Production Version
+FastAPI + OpenAI + Static Hosting
 """
 
+import json
+import re
+from typing import Optional
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse # Для отдачи HTML
 from pydantic import BaseModel
 import httpx
 from bs4 import BeautifulSoup
 from openai import OpenAI
-import json
-import re
-from typing import Optional
 
-app = FastAPI(title="AI Conversion Booster API", version="1.0.3")
+app = FastAPI(title="AI Conversion Booster API")
 
-# Разрешаем фронтенду общаться с бэкендом
+# Настройки CORS
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -24,7 +25,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Твой ключ OpenAI (уже на месте)
+# Твой ключ OpenAI
 OPENAI_KEY = "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" 
 client = OpenAI(api_key=OPENAI_KEY)
 
@@ -32,17 +33,20 @@ class AnalyzeRequest(BaseModel):
     url: str
     tier: str = "free"
 
+# --- ЭТОТ БЛОК ОТВЕЧАЕТ ЗА ТО, ЧТОБЫ САЙТ ОТКРЫВАЛСЯ ПО ССЫЛКЕ ---
+@app.get("/")
+async def read_index():
+    # Эта команда говорит серверу: "Когда заходят на главную, покажи index.html"
+    return FileResponse("index.html")
+
 def scrape_website(url: str) -> dict:
-    """Скрапер для сбора данных с сайта"""
-    headers = {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36",
-    }
+    headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36"}
     try:
         with httpx.Client(headers=headers, timeout=20.0, follow_redirects=True) as h_client:
             response = h_client.get(url)
             response.raise_for_status()
     except Exception as e:
-        raise HTTPException(status_code=400, detail=f"Не удалось загрузить сайт: {str(e)}")
+        raise HTTPException(status_code=400, detail=f"Failed to load site: {str(e)}")
 
     soup = BeautifulSoup(response.text, "html.parser")
     for tag in soup(["script", "style", "nav", "footer", "aside", "svg"]):
@@ -53,19 +57,17 @@ def scrape_website(url: str) -> dict:
     
     return {
         "url": url,
-        "page_title": soup.find("title").get_text(strip=True) if soup.find("title") else "Unknown Site",
+        "page_title": soup.find("title").get_text(strip=True) if soup.find("title") else "Unknown",
         "headlines": headlines,
         "ctas": ctas,
         "word_count": len(soup.get_text().split()),
     }
 
 def analyze_with_ai(scraped_data: dict, tier: str) -> dict:
-    """Анализ через GPT-4o-mini с ключами, СТРОГО под твой JavaScript"""
-    
-    prompt = f"""You are a CRO expert. Analyze this website: {scraped_data['url']}
+    prompt = f"""You are a CRO expert. Analyze website: {scraped_data['url']}
     Title: {scraped_data['page_title']}
-    Headlines Found: {scraped_data['headlines']}
-    CTAs Found: {scraped_data['ctas']}
+    Headlines: {scraped_data['headlines']}
+    CTAs: {scraped_data['ctas']}
     
     Return ONLY a valid JSON with these EXACT keys for my frontend:
     1. "money_leaks": list of objects with "rank" (1,2,3), "problem", "explanation", "estimated_loss", "severity" ("high" or "medium").
@@ -73,9 +75,8 @@ def analyze_with_ai(scraped_data: dict, tier: str) -> dict:
     3. "conversion_potential": object with "current_estimate", "improved_estimate", "improvement", "revenue_impact".
     4. "psychological_analysis": object with "trust_score", "clarity_score", "urgency_score" (0-10), "trust_issues" (list), "clarity_issues" (list), "emotional_hooks_missing" (string), "missing_triggers" (list).
     
-    Language: Use the language of the website for analysis text.
+    Language: Use the site's language.
     """
-
     try:
         response = client.chat.completions.create(
             model="gpt-4o-mini",
@@ -90,11 +91,8 @@ def analyze_with_ai(scraped_data: dict, tier: str) -> dict:
 async def analyze(request: AnalyzeRequest):
     url = request.url.strip()
     if not url.startswith("http"): url = "https://" + url
-    
     scraped = scrape_website(url)
-    # Передаем tier в функцию анализа
     analysis = analyze_with_ai(scraped, request.tier)
-
     return {
         "url": url,
         "tier": request.tier,
@@ -109,4 +107,7 @@ async def analyze(request: AnalyzeRequest):
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="127.0.0.1", port=8000)
+    import os
+    # Для Render важно использовать порт из переменной окружения
+    port = int(os.environ.get("PORT", 8000))
+    uvicorn.run(app, host="0.0.0.0", port=port)
