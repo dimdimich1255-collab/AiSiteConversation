@@ -1,0 +1,1465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Conversion Booster — Stop Losing Money. Start Converting.</title>
+<meta name="description" content="Paste your URL. Get AI-powered fixes that increase sales. Specific rewrites, not generic advice.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --black: #0a0a0a;
+    --white: #f5f0e8;
+    --cream: #f0ead8;
+    --accent: #ff4d1c;
+    --accent2: #ffb800;
+    --muted: #6b6560;
+    --card: #141414;
+    --border: #222;
+    --green: #00c853;
+    --red: #ff1744;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--black);
+    color: var(--white);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ─── NOISE TEXTURE ─── */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.4;
+  }
+
+  /* ─── HEADER ─── */
+  header {
+    position: fixed; top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.2rem 2rem;
+    border-bottom: 1px solid var(--border);
+    background: rgba(10,10,10,0.92);
+    backdrop-filter: blur(12px);
+  }
+
+  .logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1.1rem;
+    letter-spacing: -0.02em;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .logo-dot { 
+    width: 8px; height: 8px; 
+    background: var(--accent); 
+    border-radius: 50%; 
+    display: inline-block;
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.6; transform: scale(1.3); }
+  }
+
+  .nav-cta {
+    background: var(--accent);
+    color: white;
+    border: none;
+    padding: 0.5rem 1.2rem;
+    border-radius: 4px;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 500;
+    font-size: 0.85rem;
+    cursor: pointer;
+    text-decoration: none;
+    transition: opacity 0.2s;
+  }
+  .nav-cta:hover { opacity: 0.85; }
+
+  /* ─── HERO ─── */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 8rem 1.5rem 4rem;
+    position: relative;
+  }
+
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: rgba(255,77,28,0.12);
+    border: 1px solid rgba(255,77,28,0.3);
+    color: var(--accent);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 0.35rem 0.85rem;
+    border-radius: 100px;
+    margin-bottom: 2rem;
+    animation: fadeUp 0.6s ease both;
+  }
+
+  h1 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: clamp(2.8rem, 7vw, 6rem);
+    line-height: 1.0;
+    letter-spacing: -0.03em;
+    max-width: 900px;
+    animation: fadeUp 0.7s 0.1s ease both;
+  }
+
+  h1 em {
+    font-style: normal;
+    color: var(--accent);
+    position: relative;
+  }
+
+  .hero-sub {
+    font-size: clamp(1rem, 2.5vw, 1.25rem);
+    color: var(--muted);
+    max-width: 560px;
+    margin: 1.5rem auto 3rem;
+    font-weight: 300;
+    animation: fadeUp 0.7s 0.2s ease both;
+  }
+
+  /* ─── URL INPUT BOX ─── */
+  .url-box {
+    width: 100%;
+    max-width: 680px;
+    animation: fadeUp 0.7s 0.3s ease both;
+  }
+
+  .url-form {
+    display: flex;
+    gap: 0;
+    background: var(--card);
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+  .url-form:focus-within { border-color: var(--accent); }
+
+  .url-input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--white);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.95rem;
+    padding: 1.1rem 1.2rem;
+  }
+  .url-input::placeholder { color: var(--muted); }
+
+  .analyze-btn {
+    background: var(--accent);
+    color: white;
+    border: none;
+    padding: 1.1rem 1.8rem;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: background 0.2s;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .analyze-btn:hover { background: #e03d10; }
+  .analyze-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  .tier-row {
+    display: flex;
+    gap: 0.8rem;
+    margin-top: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .tier-chip {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    padding: 0.4rem 0.9rem;
+    border-radius: 100px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .tier-chip.active {
+    border-color: var(--accent2);
+    color: var(--accent2);
+    background: rgba(255,184,0,0.08);
+  }
+
+  /* ─── SOCIAL PROOF BAR ─── */
+  .proof-bar {
+    display: flex;
+    gap: 2.5rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 3.5rem;
+    animation: fadeUp 0.7s 0.4s ease both;
+  }
+
+  .proof-stat {
+    text-align: center;
+  }
+  .proof-num {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1.5rem;
+    color: var(--accent2);
+  }
+  .proof-label {
+    font-size: 0.78rem;
+    color: var(--muted);
+    margin-top: 0.15rem;
+  }
+
+  /* ─── LOADING STATE ─── */
+  .loading-overlay {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1.5rem;
+    padding: 4rem 1.5rem;
+  }
+  .loading-overlay.active { display: flex; }
+
+  .loading-bar-wrap {
+    width: 300px;
+    height: 3px;
+    background: var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .loading-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    border-radius: 2px;
+    animation: loadBar 8s ease forwards;
+  }
+  @keyframes loadBar {
+    0% { width: 0%; }
+    30% { width: 35%; }
+    60% { width: 65%; }
+    85% { width: 88%; }
+    100% { width: 95%; }
+  }
+
+  .loading-steps {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--muted);
+    text-align: center;
+  }
+  .loading-step { 
+    opacity: 0; 
+    transform: translateY(4px);
+    transition: all 0.4s; 
+    margin: 0.2rem 0;
+  }
+  .loading-step.visible { opacity: 1; transform: translateY(0); }
+  .loading-step.done { color: var(--green); }
+  .loading-step.done::before { content: "✓ "; }
+  .loading-step.active { color: var(--accent2); }
+  .loading-step.active::before { content: "→ "; }
+
+  /* ─── RESULTS ─── */
+  #results {
+    display: none;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 6rem;
+  }
+  #results.active { display: block; }
+
+  .results-header {
+    text-align: center;
+    margin-bottom: 3rem;
+    animation: fadeUp 0.5s ease both;
+  }
+
+  .results-url {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--muted);
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 0.4rem 0.9rem;
+    border-radius: 6px;
+    display: inline-block;
+    margin-bottom: 1rem;
+    word-break: break-all;
+  }
+
+  .results-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .meta-chips {
+    display: flex;
+    gap: 0.6rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 1rem;
+  }
+  .meta-chip {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--muted);
+    padding: 0.3rem 0.75rem;
+  }
+
+  /* ─── SECTION ─── */
+  .section {
+    margin-bottom: 2.5rem;
+    animation: fadeUp 0.5s ease both;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1.2rem;
+  }
+
+  .section-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--accent);
+    background: rgba(255,77,28,0.1);
+    border: 1px solid rgba(255,77,28,0.2);
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+  }
+
+  .section-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 1.25rem;
+  }
+
+  /* ─── MONEY LEAK CARD ─── */
+  .leak-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 0.75rem;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 1rem;
+    align-items: start;
+    transition: border-color 0.2s;
+  }
+  .leak-card:hover { border-color: #333; }
+
+  .leak-rank {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 2rem;
+    color: #2a2a2a;
+    line-height: 1;
+    min-width: 2rem;
+  }
+  .leak-rank.rank-1 { color: var(--accent); }
+  .leak-rank.rank-2 { color: #ff8c42; }
+  .leak-rank.rank-3 { color: var(--accent2); }
+
+  .leak-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    margin-bottom: 0.4rem;
+  }
+  .leak-body {
+    font-size: 0.875rem;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  .severity-badge {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 0.2rem 0.6rem;
+    border-radius: 4px;
+    white-space: nowrap;
+  }
+  .severity-critical { background: rgba(255,23,68,0.15); color: var(--red); border: 1px solid rgba(255,23,68,0.3); }
+  .severity-high { background: rgba(255,77,28,0.15); color: var(--accent); border: 1px solid rgba(255,77,28,0.3); }
+  .severity-medium { background: rgba(255,184,0,0.12); color: var(--accent2); border: 1px solid rgba(255,184,0,0.25); }
+
+  /* ─── BEFORE/AFTER ─── */
+  .ba-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 0.75rem;
+  }
+
+  .ba-header {
+    padding: 0.6rem 1.2rem;
+    background: rgba(255,255,255,0.02);
+    border-bottom: 1px solid var(--border);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  .ba-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+  }
+
+  @media (max-width: 600px) {
+    .ba-row { grid-template-columns: 1fr; }
+  }
+
+  .ba-before, .ba-after {
+    padding: 1.2rem 1.5rem;
+    position: relative;
+  }
+  .ba-before { 
+    border-right: 1px solid var(--border);
+    background: rgba(255,23,68,0.03);
+  }
+  .ba-after { background: rgba(0,200,83,0.03); }
+
+  .ba-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 0.5rem;
+  }
+  .ba-before .ba-label { color: var(--red); }
+  .ba-after .ba-label { color: var(--green); }
+
+  .ba-text {
+    font-size: 0.95rem;
+    line-height: 1.5;
+    color: var(--white);
+  }
+  .ba-before .ba-text { opacity: 0.6; text-decoration: line-through; text-decoration-color: rgba(255,23,68,0.4); }
+
+  .ba-reason {
+    padding: 0.75rem 1.5rem;
+    border-top: 1px solid var(--border);
+    font-size: 0.8rem;
+    color: var(--muted);
+    font-style: italic;
+  }
+
+  .copy-btn {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    padding: 0.25rem 0.6rem;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-top: 0.5rem;
+  }
+  .copy-btn:hover { border-color: var(--green); color: var(--green); }
+  .copy-btn.copied { border-color: var(--green); color: var(--green); }
+
+  /* ─── STRUCTURE IMPROVEMENTS ─── */
+  .struct-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent2);
+    border-radius: 10px;
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 0.75rem;
+  }
+  .struct-element {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 0.95rem;
+    margin-bottom: 0.3rem;
+    color: var(--accent2);
+  }
+  .struct-action {
+    font-size: 0.875rem;
+    color: var(--muted);
+    margin-bottom: 0.6rem;
+  }
+  .struct-example {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 0.75rem 1rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--white);
+    line-height: 1.5;
+  }
+
+  /* ─── CONVERSION POTENTIAL ─── */
+  .potential-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+  @media (max-width: 600px) { .potential-grid { grid-template-columns: 1fr; } }
+
+  .potential-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.5rem;
+    text-align: center;
+  }
+  .potential-num {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 2.5rem;
+    line-height: 1;
+    margin-bottom: 0.3rem;
+  }
+  .potential-card:nth-child(1) .potential-num { color: var(--red); }
+  .potential-card:nth-child(2) .potential-num { color: var(--green); }
+  .potential-card:nth-child(3) .potential-num { color: var(--accent2); }
+  .potential-label {
+    font-size: 0.78rem;
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .revenue-callout {
+    background: rgba(0,200,83,0.06);
+    border: 1px solid rgba(0,200,83,0.2);
+    border-radius: 10px;
+    padding: 1.2rem 1.5rem;
+    margin-bottom: 1rem;
+  }
+  .revenue-callout-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: var(--green);
+    margin-bottom: 0.3rem;
+  }
+  .revenue-callout-body {
+    font-size: 0.875rem;
+    color: var(--muted);
+  }
+
+  /* ─── PSYCHOLOGICAL ANALYSIS ─── */
+  .psych-scores {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+  @media (max-width: 600px) { .psych-scores { grid-template-columns: 1fr; } }
+
+  .score-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.25rem;
+    text-align: center;
+  }
+  .score-num {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 2.2rem;
+    line-height: 1;
+    margin-bottom: 0.25rem;
+  }
+  .score-bar-wrap {
+    height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    margin: 0.6rem 0 0.4rem;
+    overflow: hidden;
+  }
+  .score-bar { height: 100%; border-radius: 2px; transition: width 1s ease; }
+  .score-label { font-size: 0.72rem; color: var(--muted); font-family: 'DM Mono', monospace; }
+
+  .issues-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+  @media (max-width: 600px) { .issues-grid { grid-template-columns: 1fr; } }
+
+  .issues-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.2rem;
+  }
+  .issues-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 0.85rem;
+    margin-bottom: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+  .issues-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+  .issues-list li {
+    font-size: 0.825rem;
+    color: var(--muted);
+    padding-left: 1rem;
+    position: relative;
+    line-height: 1.5;
+  }
+  .issues-list li::before {
+    content: '—';
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+  }
+
+  .emotional-card {
+    background: linear-gradient(135deg, rgba(255,77,28,0.06), rgba(255,184,0,0.06));
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.25rem 1.5rem;
+  }
+  .emotional-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: var(--accent2);
+    margin-bottom: 0.5rem;
+  }
+  .emotional-body {
+    font-size: 0.875rem;
+    color: var(--muted);
+    line-height: 1.7;
+  }
+
+  /* ─── FREE TIER BLUR / UPSELL ─── */
+  .upsell-wall {
+    position: relative;
+    margin-bottom: 2rem;
+  }
+  .upsell-blur {
+    filter: blur(6px);
+    pointer-events: none;
+    user-select: none;
+    opacity: 0.4;
+  }
+  .upsell-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(to bottom, transparent, rgba(10,10,10,0.95));
+    padding: 2rem;
+    text-align: center;
+    border-radius: 12px;
+  }
+  .upsell-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1.3rem;
+    margin-bottom: 0.5rem;
+  }
+  .upsell-sub {
+    color: var(--muted);
+    font-size: 0.875rem;
+    margin-bottom: 1.2rem;
+    max-width: 380px;
+  }
+  .upsell-btn {
+    background: var(--accent);
+    color: white;
+    border: none;
+    padding: 0.8rem 2rem;
+    border-radius: 8px;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .upsell-btn:hover { background: #e03d10; }
+  .upsell-price {
+    margin-top: 0.6rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--muted);
+  }
+
+  /* ─── PRICING SECTION ─── */
+  #pricing {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 5rem 1.5rem;
+    text-align: center;
+  }
+  .pricing-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+    letter-spacing: -0.03em;
+  }
+  .pricing-sub {
+    color: var(--muted);
+    margin-bottom: 3rem;
+  }
+  .pricing-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.2rem;
+    text-align: left;
+  }
+  @media (max-width: 700px) { .pricing-grid { grid-template-columns: 1fr; } }
+
+  .pricing-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 2rem;
+    position: relative;
+  }
+  .pricing-card.featured {
+    border-color: var(--accent);
+    background: rgba(255,77,28,0.04);
+  }
+  .pricing-card.featured::before {
+    content: 'MOST POPULAR';
+    position: absolute;
+    top: -1px; left: 50%; transform: translateX(-50%);
+    background: var(--accent);
+    color: white;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.1em;
+    padding: 0.25rem 0.75rem;
+    border-radius: 0 0 6px 6px;
+  }
+
+  .pricing-plan {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 0.75rem;
+  }
+  .pricing-price {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 2.5rem;
+    line-height: 1;
+    margin-bottom: 0.2rem;
+  }
+  .pricing-period {
+    font-size: 0.8rem;
+    color: var(--muted);
+    margin-bottom: 1.5rem;
+  }
+  .pricing-features {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    margin-bottom: 2rem;
+  }
+  .pricing-features li {
+    font-size: 0.875rem;
+    color: var(--muted);
+    display: flex;
+    gap: 0.5rem;
+    align-items: flex-start;
+  }
+  .pricing-features li span:first-child {
+    color: var(--green);
+    flex-shrink: 0;
+  }
+  .pricing-btn {
+    width: 100%;
+    padding: 0.85rem;
+    border-radius: 8px;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: 1.5px solid var(--border);
+    background: transparent;
+    color: var(--white);
+  }
+  .pricing-card.featured .pricing-btn {
+    background: var(--accent);
+    border-color: var(--accent);
+  }
+  .pricing-btn:hover { opacity: 0.8; }
+
+  /* ─── HOW IT WORKS ─── */
+  .how-section {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 5rem 1.5rem;
+  }
+  .how-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 2rem;
+    text-align: center;
+    margin-bottom: 3rem;
+    letter-spacing: -0.03em;
+  }
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    position: relative;
+  }
+  @media (max-width: 600px) { .steps { grid-template-columns: 1fr; } }
+
+  .step {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.75rem;
+    position: relative;
+  }
+  .step-num {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 3rem;
+    color: rgba(255,255,255,0.05);
+    line-height: 1;
+    margin-bottom: 0.5rem;
+  }
+  .step-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+  }
+  .step-body { font-size: 0.85rem; color: var(--muted); line-height: 1.6; }
+
+  /* ─── FOOTER ─── */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 2rem 1.5rem;
+    text-align: center;
+    color: var(--muted);
+    font-size: 0.8rem;
+    font-family: 'DM Mono', monospace;
+  }
+
+  /* ─── UTILS ─── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 0;
+  }
+
+  .error-msg {
+    background: rgba(255,23,68,0.1);
+    border: 1px solid rgba(255,23,68,0.25);
+    border-radius: 8px;
+    padding: 1rem 1.5rem;
+    color: var(--red);
+    font-size: 0.875rem;
+    margin-top: 1rem;
+    display: none;
+  }
+  .error-msg.active { display: block; }
+
+  .new-analysis-btn {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-family: 'Syne', sans-serif;
+    font-weight: 600;
+    font-size: 0.85rem;
+    padding: 0.6rem 1.4rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-top: 1rem;
+  }
+  .new-analysis-btn:hover { border-color: var(--white); color: var(--white); }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="logo">
+    <span class="logo-dot"></span>
+    ConversionBooster
+  </div>
+  <a href="#pricing" class="nav-cta">Get Full Analysis — $7</a>
+</header>
+
+<!-- HERO -->
+<section class="hero" id="hero">
+  <div class="hero-badge">🔥 AI-Powered CRO Tool</div>
+  <h1>Your website is losing money.<br>We'll show you <em>exactly</em> where.</h1>
+  <p class="hero-sub">Paste your URL. Get AI-powered rewrites, CTA fixes, and conversion estimates — in under 60 seconds.</p>
+
+  <div class="url-box">
+    <div class="url-form">
+      <input type="url" class="url-input" id="urlInput" placeholder="https://yourwebsite.com" />
+      <button class="analyze-btn" id="analyzeBtn" onclick="startAnalysis()">
+        Analyze Free →
+      </button>
+    </div>
+    <div class="tier-row">
+      <button class="tier-chip active" onclick="selectTier('free', this)">Free Preview</button>
+      <button class="tier-chip" onclick="selectTier('paid', this)">Full Analysis — $7</button>
+      <button class="tier-chip" onclick="selectTier('pro', this)">Pro — $19/mo</button>
+    </div>
+    <div class="error-msg" id="errorMsg"></div>
+  </div>
+
+  <div class="proof-bar">
+    <div class="proof-stat"><div class="proof-num">2,400+</div><div class="proof-label">Websites analyzed</div></div>
+    <div class="proof-stat"><div class="proof-num">avg +34%</div><div class="proof-label">Conversion lift</div></div>
+    <div class="proof-stat"><div class="proof-num">&lt;60s</div><div class="proof-label">Analysis time</div></div>
+    <div class="proof-stat"><div class="proof-num">$0</div><div class="proof-label">To start</div></div>
+  </div>
+</section>
+
+<!-- LOADING -->
+<div class="loading-overlay" id="loading">
+  <div style="text-align:center">
+    <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:1.5rem;margin-bottom:0.5rem">
+      Analyzing your site...
+    </div>
+    <div style="font-size:0.85rem;color:var(--muted);margin-bottom:1.5rem">
+      Our AI is reading every element on your page
+    </div>
+  </div>
+  <div class="loading-bar-wrap">
+    <div class="loading-bar" id="loadingBar"></div>
+  </div>
+  <div class="loading-steps" id="loadingSteps">
+    <div class="loading-step" id="step1">Fetching website content</div>
+    <div class="loading-step" id="step2">Extracting headlines & CTAs</div>
+    <div class="loading-step" id="step3">Running conversion AI analysis</div>
+    <div class="loading-step" id="step4">Generating exact rewrites</div>
+    <div class="loading-step" id="step5">Calculating revenue impact</div>
+  </div>
+</div>
+
+<!-- RESULTS -->
+<div id="results">
+  <div class="results-header">
+    <div class="results-url" id="resultsUrl"></div>
+    <div class="results-title">Your Conversion Audit Report</div>
+    <div class="meta-chips" id="metaChips"></div>
+  </div>
+
+  <!-- SECTION 1: MONEY LEAKS -->
+  <div class="section" id="s1">
+    <div class="section-header">
+      <span class="section-num">01</span>
+      <span class="section-title">Where You're Losing Money</span>
+    </div>
+    <div id="leaksContainer"></div>
+  </div>
+
+  <!-- SECTION 2: EXACT FIXES -->
+  <div class="section" id="s2">
+    <div class="section-header">
+      <span class="section-num">02</span>
+      <span class="section-title">Exact Fixes (Copy & Paste Ready)</span>
+    </div>
+
+    <div style="font-family:'DM Mono',monospace;font-size:0.72rem;color:var(--muted);margin-bottom:0.75rem;text-transform:uppercase;letter-spacing:0.06em;">Headlines →</div>
+    <div id="headlineRewrites"></div>
+
+    <div style="font-family:'DM Mono',monospace;font-size:0.72rem;color:var(--muted);margin:1.25rem 0 0.75rem;text-transform:uppercase;letter-spacing:0.06em;">CTA Buttons →</div>
+    <div id="ctaRewrites"></div>
+
+    <div id="structureSection">
+      <div style="font-family:'DM Mono',monospace;font-size:0.72rem;color:var(--muted);margin:1.25rem 0 0.75rem;text-transform:uppercase;letter-spacing:0.06em;">Structure Improvements →</div>
+      <div id="structureRewrites"></div>
+    </div>
+  </div>
+
+  <!-- SECTION 3: CONVERSION POTENTIAL -->
+  <div class="section" id="s3">
+    <div class="section-header">
+      <span class="section-num">03</span>
+      <span class="section-title">Conversion Potential</span>
+    </div>
+    <div class="potential-grid" id="potentialGrid"></div>
+    <div class="revenue-callout" id="revenueCallout"></div>
+  </div>
+
+  <!-- SECTION 4: PSYCHOLOGICAL ANALYSIS -->
+  <div class="section" id="s4">
+    <div class="section-header">
+      <span class="section-num">04</span>
+      <span class="section-title">Psychological Analysis</span>
+    </div>
+    <div class="psych-scores" id="psychScores"></div>
+    <div class="issues-grid" id="psychIssues"></div>
+    <div class="emotional-card" id="emotionalCard"></div>
+  </div>
+
+  <div style="text-align:center;padding-top:1rem;">
+    <button class="new-analysis-btn" onclick="resetForm()">← Analyze Another URL</button>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- HOW IT WORKS -->
+<div class="how-section">
+  <div class="how-title">How It Works</div>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">01</div>
+      <div class="step-title">Paste Your URL</div>
+      <div class="step-body">Drop your website link. Works with landing pages, ecommerce, SaaS, local business — any site.</div>
+    </div>
+    <div class="step">
+      <div class="step-num">02</div>
+      <div class="step-title">AI Reads Your Page</div>
+      <div class="step-body">Our AI scrapes every headline, CTA, and paragraph. It sees what your visitors see.</div>
+    </div>
+    <div class="step">
+      <div class="step-num">03</div>
+      <div class="step-title">Get Specific Fixes</div>
+      <div class="step-body">Not "improve your headlines." Exact rewrites you copy-paste directly onto your site today.</div>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- PRICING -->
+<section id="pricing">
+  <div class="pricing-title">Simple Pricing</div>
+  <p class="pricing-sub">Start free. Upgrade when you see the value.</p>
+  <div class="pricing-grid">
+    <div class="pricing-card">
+      <div class="pricing-plan">Free</div>
+      <div class="pricing-price">$0</div>
+      <div class="pricing-period">forever</div>
+      <ul class="pricing-features">
+        <li><span>✓</span><span>Top 5 conversion problems</span></li>
+        <li><span>✓</span><span>1 headline rewrite</span></li>
+        <li><span>✓</span><span>Conversion estimate</span></li>
+        <li><span>✗</span><span style="text-decoration:line-through">Full CTA rewrites</span></li>
+        <li><span>✗</span><span style="text-decoration:line-through">Structure plan</span></li>
+        <li><span>✗</span><span style="text-decoration:line-through">Psychological analysis</span></li>
+      </ul>
+      <button class="pricing-btn" onclick="document.getElementById('urlInput').focus(); selectTier('free', document.querySelectorAll('.tier-chip')[0])">Start Free</button>
+    </div>
+    <div class="pricing-card featured">
+      <div class="pricing-plan">Full Analysis</div>
+      <div class="pricing-price">$7</div>
+      <div class="pricing-period">per analysis</div>
+      <ul class="pricing-features">
+        <li><span>✓</span><span>Everything in Free</span></li>
+        <li><span>✓</span><span>All headline rewrites</span></li>
+        <li><span>✓</span><span>All CTA rewrites</span></li>
+        <li><span>✓</span><span>Structure improvements</span></li>
+        <li><span>✓</span><span>Full psychological report</span></li>
+        <li><span>✓</span><span>Revenue impact estimate</span></li>
+      </ul>
+      <button class="pricing-btn" onclick="selectTier('paid', document.querySelectorAll('.tier-chip')[1]); document.getElementById('urlInput').focus()">Get Full Analysis</button>
+    </div>
+    <div class="pricing-card">
+      <div class="pricing-plan">Pro</div>
+      <div class="pricing-price">$19</div>
+      <div class="pricing-period">per month</div>
+      <ul class="pricing-features">
+        <li><span>✓</span><span>Unlimited analyses</span></li>
+        <li><span>✓</span><span>Full landing page rewrite</span></li>
+        <li><span>✓</span><span>Analysis history</span></li>
+        <li><span>✓</span><span>A/B test variants</span></li>
+        <li><span>✓</span><span>Priority support</span></li>
+        <li><span>✓</span><span>Export to PDF/Notion</span></li>
+      </ul>
+      <button class="pricing-btn" onclick="selectTier('pro', document.querySelectorAll('.tier-chip')[2]); document.getElementById('urlInput').focus()">Go Pro</button>
+    </div>
+  </div>
+</section>
+
+<footer>
+  Built with Claude AI · ConversionBooster © 2025 · <a href="#" style="color:var(--muted)">Terms</a> · <a href="#" style="color:var(--muted)">Privacy</a>
+</footer>
+
+<script>
+// ─── STATE ───────────────────────────────────────────────────────────────────
+let currentTier = 'free';
+const API_BASE = 'http://127.0.0.1:8000';
+
+// ─── TIER SELECTION ───────────────────────────────────────────────────────────
+function selectTier(tier, el) {
+  currentTier = tier;
+  document.querySelectorAll('.tier-chip').forEach(c => c.classList.remove('active'));
+  if (el) el.classList.add('active');
+}
+
+// ─── LOADING ANIMATION ───────────────────────────────────────────────────────
+let loadingTimer;
+function startLoadingSteps() {
+  const steps = ['step1', 'step2', 'step3', 'step4', 'step5'];
+  const delays = [0, 800, 1800, 4000, 6000];
+  steps.forEach((id, i) => {
+    setTimeout(() => {
+      const el = document.getElementById(id);
+      el.classList.add('visible', 'active');
+      if (i > 0) {
+        const prev = document.getElementById(steps[i-1]);
+        prev.classList.remove('active');
+        prev.classList.add('done');
+      }
+    }, delays[i]);
+  });
+}
+
+// ─── MAIN ANALYSIS ────────────────────────────────────────────────────────────
+async function startAnalysis() {
+  const url = document.getElementById('urlInput').value.trim();
+  if (!url) {
+    showError('Please enter a website URL.');
+    return;
+  }
+
+  hideError();
+  showLoading();
+
+  try {
+    const res = await fetch(`${API_BASE}/analyze`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ url, tier: currentTier })
+    });
+
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.detail || 'Analysis failed. Please try again.');
+    }
+
+    const data = await res.json();
+    renderResults(data);
+  } catch (err) {
+    hideLoading();
+    showError(err.message || 'Could not reach the analysis server. Make sure the backend is running.');
+  }
+}
+
+function showLoading() {
+  document.getElementById('hero').style.display = 'none';
+  document.getElementById('results').classList.remove('active');
+  const lo = document.getElementById('loading');
+  lo.classList.add('active');
+  lo.style.display = 'flex';
+  // Reset bar
+  const bar = document.getElementById('loadingBar');
+  bar.style.animation = 'none';
+  bar.offsetHeight; // reflow
+  bar.style.animation = '';
+  // Reset steps
+  ['step1','step2','step3','step4','step5'].forEach(id => {
+    const el = document.getElementById(id);
+    el.classList.remove('visible','active','done');
+  });
+  startLoadingSteps();
+}
+
+function hideLoading() {
+  const lo = document.getElementById('loading');
+  lo.classList.remove('active');
+  lo.style.display = 'none';
+}
+
+function showError(msg) {
+  const el = document.getElementById('errorMsg');
+  el.textContent = msg;
+  el.classList.add('active');
+  document.getElementById('hero').style.display = 'flex';
+}
+function hideError() {
+  document.getElementById('errorMsg').classList.remove('active');
+}
+
+function resetForm() {
+  document.getElementById('results').classList.remove('active');
+  document.getElementById('hero').style.display = 'flex';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ─── RENDER RESULTS ───────────────────────────────────────────────────────────
+function renderResults(data) {
+  hideLoading();
+
+  document.getElementById('resultsUrl').textContent = data.url;
+
+  const m = data.scraped_meta || {};
+  document.getElementById('metaChips').innerHTML = `
+    <span class="meta-chip">${m.word_count || '?'} words</span>
+    <span class="meta-chip">${m.headline_count || '?'} headlines</span>
+    <span class="meta-chip">${m.cta_count || '?'} CTAs found</span>
+    <span class="meta-chip">${data.tier} tier</span>
+  `;
+
+  // Section 1: Money Leaks
+  const leaks = data.money_leaks || [];
+  document.getElementById('leaksContainer').innerHTML = leaks.map(l => `
+    <div class="leak-card">
+      <div class="leak-rank rank-${l.rank}">${l.rank}</div>
+      <div>
+        <div class="leak-title">${esc(l.problem)}</div>
+        <div class="leak-body">${esc(l.explanation)}</div>
+        <div style="font-family:'DM Mono',monospace;font-size:0.7rem;color:var(--muted);margin-top:0.5rem">
+          Est. loss: ${esc(l.estimated_loss)}
+        </div>
+      </div>
+      <span class="severity-badge severity-${l.severity}">${l.severity}</span>
+    </div>
+  `).join('');
+
+  // Section 2: Exact Fixes
+  const fixes = data.exact_fixes || {};
+
+  const headlines = fixes.headline_rewrites || [];
+  document.getElementById('headlineRewrites').innerHTML = headlines.map(h => baCard('Headline', h)).join('');
+
+  const ctas = fixes.cta_rewrites || [];
+  document.getElementById('ctaRewrites').innerHTML = ctas.map(c => baCard('CTA Button', c)).join('');
+
+  // Structure improvements - free tier gated
+  const structs = fixes.structure_improvements || [];
+  if (data.tier === 'free') {
+    document.getElementById('structureSection').innerHTML = upsellWall(
+      structs,
+      'See 3 Structure Improvements',
+      'Unlock the exact page elements to add/move/remove to boost conversions.',
+      'Unlock Full Analysis — $7'
+    );
+  } else {
+    document.getElementById('structureRewrites').innerHTML = structs.map(s => `
+      <div class="struct-card">
+        <div class="struct-element">${esc(s.element)}</div>
+        <div class="struct-action">${esc(s.action)}</div>
+        <div class="struct-example">${esc(s.example)}</div>
+      </div>
+    `).join('');
+  }
+
+  // Section 3: Conversion Potential
+  const cp = data.conversion_potential || {};
+  document.getElementById('potentialGrid').innerHTML = `
+    <div class="potential-card">
+      <div class="potential-num">${esc(cp.current_estimate || '?')}</div>
+      <div class="potential-label">Current Rate</div>
+    </div>
+    <div class="potential-card">
+      <div class="potential-num">${esc(cp.improved_estimate || '?')}</div>
+      <div class="potential-label">After Fixes</div>
+    </div>
+    <div class="potential-card">
+      <div class="potential-num">${esc(cp.improvement || '?')}</div>
+      <div class="potential-label">Improvement</div>
+    </div>
+  `;
+  document.getElementById('revenueCallout').innerHTML = `
+    <div class="revenue-callout-title">💰 Revenue Impact</div>
+    <div class="revenue-callout-body">${esc(cp.revenue_impact || cp.reasoning || '')}</div>
+  `;
+
+  // Section 4: Psychological Analysis
+  const pa = data.psychological_analysis || {};
+  const scores = [
+    { label: 'Trust', val: pa.trust_score || 0, color: '#ff4d1c' },
+    { label: 'Clarity', val: pa.clarity_score || 0, color: '#ffb800' },
+    { label: 'Urgency', val: pa.urgency_score || 0, color: '#00c853' },
+  ];
+  document.getElementById('psychScores').innerHTML = scores.map(s => `
+    <div class="score-card">
+      <div class="score-num" style="color:${s.color}">${s.val}<span style="font-size:1rem;color:var(--muted)">/10</span></div>
+      <div class="score-bar-wrap">
+        <div class="score-bar" style="background:${s.color};width:${s.val * 10}%"></div>
+      </div>
+      <div class="score-label">${s.label} Score</div>
+    </div>
+  `).join('');
+
+  const trustIssues = pa.trust_issues || [];
+  const clarityIssues = pa.clarity_issues || [];
+
+  if (data.tier === 'free') {
+    // Show scores but blur the detailed analysis
+    document.getElementById('psychIssues').innerHTML = '';
+    document.getElementById('emotionalCard').innerHTML = '';
+    const blurTarget = document.getElementById('s4');
+    // Append upsell after scores
+    blurTarget.insertAdjacentHTML('beforeend', `
+      <div style="position:relative;margin-top:1rem;">
+        <div style="filter:blur(5px);pointer-events:none;opacity:0.3;">
+          <div class="issues-grid">
+            <div class="issues-card"><div class="issues-title">🔒 Trust Issues</div><ul class="issues-list"><li>Blurred premium content</li><li>Unlock to see all</li></ul></div>
+            <div class="issues-card"><div class="issues-title">🔒 Clarity Issues</div><ul class="issues-list"><li>Blurred premium content</li><li>Unlock to see all</li></ul></div>
+          </div>
+        </div>
+        <div class="upsell-overlay">
+          <div class="upsell-title">See the Full Psychological Analysis</div>
+          <div class="upsell-sub">Find out exactly which trust signals are missing, which emotions aren't triggered, and what's making visitors leave.</div>
+          <button class="upsell-btn" onclick="selectTier('paid', null); document.getElementById('urlInput').focus(); window.scrollTo({top:0,behavior:'smooth'})">Unlock Full Analysis — $7</button>
+          <div class="upsell-price">One-time · No subscription required</div>
+        </div>
+      </div>
+    `);
+  } else {
+    document.getElementById('psychIssues').innerHTML = `
+      <div class="issues-card">
+        <div class="issues-title">🔴 Trust Issues</div>
+        <ul class="issues-list">${trustIssues.map(i => `<li>${esc(i)}</li>`).join('')}</ul>
+      </div>
+      <div class="issues-card">
+        <div class="issues-title">🟡 Clarity Issues</div>
+        <ul class="issues-list">${clarityIssues.map(i => `<li>${esc(i)}</li>`).join('')}</ul>
+      </div>
+    `;
+    document.getElementById('emotionalCard').innerHTML = `
+      <div class="emotional-title">⚡ Missing Emotional Triggers</div>
+      <div class="emotional-body">${esc(pa.emotional_hooks_missing || '')}</div>
+      ${(pa.missing_triggers||[]).length ? `<ul style="margin-top:0.75rem;list-style:none;display:flex;flex-direction:column;gap:0.3rem">
+        ${(pa.missing_triggers||[]).map(t => `<li style="font-size:0.8rem;color:var(--muted)">→ ${esc(t)}</li>`).join('')}
+      </ul>` : ''}
+    `;
+  }
+
+  document.getElementById('results').classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ─── BEFORE/AFTER CARD ────────────────────────────────────────────────────────
+function baCard(type, item) {
+  const afterText = item.after || '';
+  const id = 'copy_' + Math.random().toString(36).slice(2,8);
+  return `
+    <div class="ba-card">
+      <div class="ba-header">${esc(type)}</div>
+      <div class="ba-row">
+        <div class="ba-before">
+          <div class="ba-label">Before</div>
+          <div class="ba-text">${esc(item.before || '')}</div>
+        </div>
+        <div class="ba-after">
+          <div class="ba-label">After</div>
+          <div class="ba-text">${esc(afterText)}</div>
+          <button class="copy-btn" id="${id}" onclick="copyText('${id}', \`${afterText.replace(/`/g,'\\`')}\`)">Copy →</button>
+        </div>
+      </div>
+      ${item.reason ? `<div class="ba-reason">${esc(item.reason)}</div>` : ''}
+    </div>
+  `;
+}
+
+function upsellWall(mockContent, title, sub, btnText) {
+  return `
+    <div style="position:relative;margin-top:0.5rem;">
+      <div style="filter:blur(5px);pointer-events:none;opacity:0.25;padding-bottom:2rem;">
+        <div class="struct-card"><div class="struct-element">🔒 Locked</div><div class="struct-action">Premium content</div><div class="struct-example">Upgrade to unlock exact fixes...</div></div>
+        <div class="struct-card"><div class="struct-element">🔒 Locked</div><div class="struct-action">Premium content</div><div class="struct-example">Upgrade to unlock exact fixes...</div></div>
+      </div>
+      <div class="upsell-overlay" style="border-radius:10px;">
+        <div class="upsell-title">${title}</div>
+        <div class="upsell-sub">${sub}</div>
+        <button class="upsell-btn" onclick="selectTier('paid', null); document.getElementById('urlInput').focus(); window.scrollTo({top:0,behavior:'smooth'})">${btnText}</button>
+        <div class="upsell-price">One-time · No subscription</div>
+      </div>
+    </div>
+  `;
+}
+
+function copyText(btnId, text) {
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.getElementById(btnId);
+    btn.textContent = 'Copied ✓';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Copy →'; btn.classList.remove('copied'); }, 2000);
+  });
+}
+
+function esc(str) {
+  if (!str) return '';
+  return String(str)
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;');
+}
+
+// Enter key support
+document.getElementById('urlInput').addEventListener('keypress', e => {
+  if (e.key === 'Enter') startAnalysis();
+});
+</script>
+</body>
+</html>
