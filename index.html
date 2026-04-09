@@ -7,7 +7,7 @@
 <meta name="description" content="Paste your URL. Get AI-powered fixes that increase sales. Specific rewrites, not generic advice.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-
+<script src="https://js.stripe.com/v3/"></script>
 <style>
   :root {
     --black: #0a0a0a;
@@ -1152,25 +1152,68 @@
 </footer>
 
 <script>
+// ─── CONFIGURATION ───────────────────────────────────────────────────────────
+// Твой адрес на Render (без слеша в конце)
+const API_BASE = 'https://aisiteconversation.onrender.com';
+// Твой Publishable Key из Stripe (Developers -> API Keys)
+const stripe = Stripe('pk_test_51TJxs3CY51CgEDPmqSVFIjxH5zaNGvlbWKe5srUFBtAUT3JI6vIGZiEMQe8P4USCCbinXSHwkQckPjuAxeErFI2L00tL5ZHBag');
+
 // ─── STATE ───────────────────────────────────────────────────────────────────
 let currentTier = 'free';
-const API_BASE = 'http://127.0.0.1:8000';
+
+// Проверка оплаты при загрузке страницы
+window.addEventListener('load', () => {
+  const urlParams = new URLSearchParams(window.location.search);
+  if (urlParams.has('session_id')) {
+    // Если в ссылке есть ID сессии — значит юзер вернулся после оплаты
+    window.history.replaceState({}, document.title, "/"); // Чистим URL
+    currentTier = 'paid';
+    alert("Payment successful! Full access granted.");
+  }
+});
 
 // ─── TIER SELECTION ───────────────────────────────────────────────────────────
 function selectTier(tier, el) {
+  // Если юзер пытается выбрать платную версию, но еще не купил — запускаем оплату
+  if (tier === 'paid' && currentTier !== 'paid') {
+    startPayment();
+    return;
+  }
+  
   currentTier = tier;
   document.querySelectorAll('.tier-chip').forEach(c => c.classList.remove('active'));
   if (el) el.classList.add('active');
 }
 
+// ─── STRIPE PAYMENT ──────────────────────────────────────────────────────────
+async function startPayment() {
+  try {
+    const res = await fetch(`${API_BASE}/create-checkout-session`, {
+      method: 'POST',
+    });
+    const session = await res.json();
+    
+    // Перенаправление на защищенную страницу оплаты Stripe
+    const result = await stripe.redirectToCheckout({
+      sessionId: session.id,
+    });
+
+    if (result.error) {
+      alert(result.error.message);
+    }
+  } catch (err) {
+    alert("Payment initialization failed. Is the backend running?");
+  }
+}
+
 // ─── LOADING ANIMATION ───────────────────────────────────────────────────────
-let loadingTimer;
 function startLoadingSteps() {
   const steps = ['step1', 'step2', 'step3', 'step4', 'step5'];
   const delays = [0, 800, 1800, 4000, 6000];
   steps.forEach((id, i) => {
     setTimeout(() => {
       const el = document.getElementById(id);
+      if(!el) return;
       el.classList.add('visible', 'active');
       if (i > 0) {
         const prev = document.getElementById(steps[i-1]);
@@ -1201,14 +1244,14 @@ async function startAnalysis() {
 
     if (!res.ok) {
       const err = await res.json();
-      throw new Error(err.detail || 'Analysis failed. Please try again.');
+      throw new Error(err.detail || 'Analysis failed.');
     }
 
     const data = await res.json();
     renderResults(data);
   } catch (err) {
     hideLoading();
-    showError(err.message || 'Could not reach the analysis server. Make sure the backend is running.');
+    showError(err.message || 'Server error. Check if backend is live.');
   }
 }
 
@@ -1218,15 +1261,15 @@ function showLoading() {
   const lo = document.getElementById('loading');
   lo.classList.add('active');
   lo.style.display = 'flex';
-  // Reset bar
+  
   const bar = document.getElementById('loadingBar');
   bar.style.animation = 'none';
-  bar.offsetHeight; // reflow
+  bar.offsetHeight; 
   bar.style.animation = '';
-  // Reset steps
+  
   ['step1','step2','step3','step4','step5'].forEach(id => {
     const el = document.getElementById(id);
-    el.classList.remove('visible','active','done');
+    if(el) el.classList.remove('visible','active','done');
   });
   startLoadingSteps();
 }
@@ -1243,6 +1286,7 @@ function showError(msg) {
   el.classList.add('active');
   document.getElementById('hero').style.display = 'flex';
 }
+
 function hideError() {
   document.getElementById('errorMsg').classList.remove('active');
 }
@@ -1256,7 +1300,6 @@ function resetForm() {
 // ─── RENDER RESULTS ───────────────────────────────────────────────────────────
 function renderResults(data) {
   hideLoading();
-
   document.getElementById('resultsUrl').textContent = data.url;
 
   const m = data.scraped_meta || {};
@@ -1264,10 +1307,10 @@ function renderResults(data) {
     <span class="meta-chip">${m.word_count || '?'} words</span>
     <span class="meta-chip">${m.headline_count || '?'} headlines</span>
     <span class="meta-chip">${m.cta_count || '?'} CTAs found</span>
-    <span class="meta-chip">${data.tier} tier</span>
+    <span class="meta-chip">${data.tier.toUpperCase()} tier</span>
   `;
 
-  // Section 1: Money Leaks
+  // Money Leaks
   const leaks = data.money_leaks || [];
   document.getElementById('leaksContainer').innerHTML = leaks.map(l => `
     <div class="leak-card">
@@ -1283,25 +1326,24 @@ function renderResults(data) {
     </div>
   `).join('');
 
-  // Section 2: Exact Fixes
+  // Exact Fixes
   const fixes = data.exact_fixes || {};
-
   const headlines = fixes.headline_rewrites || [];
   document.getElementById('headlineRewrites').innerHTML = headlines.map(h => baCard('Headline', h)).join('');
 
   const ctas = fixes.cta_rewrites || [];
   document.getElementById('ctaRewrites').innerHTML = ctas.map(c => baCard('CTA Button', c)).join('');
 
-  // Structure improvements - free tier gated
+  // Structure Improvements
   const structs = fixes.structure_improvements || [];
   if (data.tier === 'free') {
     document.getElementById('structureSection').innerHTML = upsellWall(
-      structs,
       'See 3 Structure Improvements',
-      'Unlock the exact page elements to add/move/remove to boost conversions.',
+      'Unlock the exact page elements to add/move/remove.',
       'Unlock Full Analysis — $7'
     );
   } else {
+    document.getElementById('structureSection').innerHTML = '<div id="structureRewrites" class="struct-grid"></div>';
     document.getElementById('structureRewrites').innerHTML = structs.map(s => `
       <div class="struct-card">
         <div class="struct-element">${esc(s.element)}</div>
@@ -1311,7 +1353,7 @@ function renderResults(data) {
     `).join('');
   }
 
-  // Section 3: Conversion Potential
+  // Conversion Potential
   const cp = data.conversion_potential || {};
   document.getElementById('potentialGrid').innerHTML = `
     <div class="potential-card">
@@ -1329,10 +1371,10 @@ function renderResults(data) {
   `;
   document.getElementById('revenueCallout').innerHTML = `
     <div class="revenue-callout-title">💰 Revenue Impact</div>
-    <div class="revenue-callout-body">${esc(cp.revenue_impact || cp.reasoning || '')}</div>
+    <div class="revenue-callout-body">${esc(cp.revenue_impact || '')}</div>
   `;
 
-  // Section 4: Psychological Analysis
+  // Psychological Analysis
   const pa = data.psychological_analysis || {};
   const scores = [
     { label: 'Trust', val: pa.trust_score || 0, color: '#ff4d1c' },
@@ -1349,48 +1391,36 @@ function renderResults(data) {
     </div>
   `).join('');
 
-  const trustIssues = pa.trust_issues || [];
-  const clarityIssues = pa.clarity_issues || [];
-
   if (data.tier === 'free') {
-    // Show scores but blur the detailed analysis
-    document.getElementById('psychIssues').innerHTML = '';
-    document.getElementById('emotionalCard').innerHTML = '';
-    const blurTarget = document.getElementById('s4');
-    // Append upsell after scores
-    blurTarget.insertAdjacentHTML('beforeend', `
-      <div style="position:relative;margin-top:1rem;">
-        <div style="filter:blur(5px);pointer-events:none;opacity:0.3;">
-          <div class="issues-grid">
-            <div class="issues-card"><div class="issues-title">🔒 Trust Issues</div><ul class="issues-list"><li>Blurred premium content</li><li>Unlock to see all</li></ul></div>
-            <div class="issues-card"><div class="issues-title">🔒 Clarity Issues</div><ul class="issues-list"><li>Blurred premium content</li><li>Unlock to see all</li></ul></div>
+    const s4 = document.getElementById('s4');
+    const existingUpsell = s4.querySelector('.upsell-container');
+    if(!existingUpsell) {
+        s4.insertAdjacentHTML('beforeend', `
+          <div class="upsell-container" style="position:relative;margin-top:1rem;">
+            <div style="filter:blur(5px);opacity:0.3;pointer-events:none;">
+               <div class="issues-grid"><div class="issues-card">Trust Issues...</div></div>
+            </div>
+            <div class="upsell-overlay">
+              <div class="upsell-title">Unlock Full Psychological Analysis</div>
+              <button class="upsell-btn" onclick="startPayment()">Unlock Full Analysis — $7</button>
+            </div>
           </div>
-        </div>
-        <div class="upsell-overlay">
-          <div class="upsell-title">See the Full Psychological Analysis</div>
-          <div class="upsell-sub">Find out exactly which trust signals are missing, which emotions aren't triggered, and what's making visitors leave.</div>
-          <button class="upsell-btn" onclick="selectTier('paid', null); document.getElementById('urlInput').focus(); window.scrollTo({top:0,behavior:'smooth'})">Unlock Full Analysis — $7</button>
-          <div class="upsell-price">One-time · No subscription required</div>
-        </div>
-      </div>
-    `);
+        `);
+    }
   } else {
     document.getElementById('psychIssues').innerHTML = `
       <div class="issues-card">
         <div class="issues-title">🔴 Trust Issues</div>
-        <ul class="issues-list">${trustIssues.map(i => `<li>${esc(i)}</li>`).join('')}</ul>
+        <ul class="issues-list">${(pa.trust_issues||[]).map(i => `<li>${esc(i)}</li>`).join('')}</ul>
       </div>
       <div class="issues-card">
         <div class="issues-title">🟡 Clarity Issues</div>
-        <ul class="issues-list">${clarityIssues.map(i => `<li>${esc(i)}</li>`).join('')}</ul>
+        <ul class="issues-list">${(pa.clarity_issues||[]).map(i => `<li>${esc(i)}</li>`).join('')}</ul>
       </div>
     `;
     document.getElementById('emotionalCard').innerHTML = `
       <div class="emotional-title">⚡ Missing Emotional Triggers</div>
       <div class="emotional-body">${esc(pa.emotional_hooks_missing || '')}</div>
-      ${(pa.missing_triggers||[]).length ? `<ul style="margin-top:0.75rem;list-style:none;display:flex;flex-direction:column;gap:0.3rem">
-        ${(pa.missing_triggers||[]).map(t => `<li style="font-size:0.8rem;color:var(--muted)">→ ${esc(t)}</li>`).join('')}
-      </ul>` : ''}
     `;
   }
 
@@ -1398,7 +1428,7 @@ function renderResults(data) {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-// ─── BEFORE/AFTER CARD ────────────────────────────────────────────────────────
+// ─── HELPERS ─────────────────────────────────────────────────────────────────
 function baCard(type, item) {
   const afterText = item.after || '';
   const id = 'copy_' + Math.random().toString(36).slice(2,8);
@@ -1406,33 +1436,26 @@ function baCard(type, item) {
     <div class="ba-card">
       <div class="ba-header">${esc(type)}</div>
       <div class="ba-row">
-        <div class="ba-before">
-          <div class="ba-label">Before</div>
-          <div class="ba-text">${esc(item.before || '')}</div>
-        </div>
+        <div class="ba-before"><div class="ba-label">Before</div><div class="ba-text">${esc(item.before)}</div></div>
         <div class="ba-after">
           <div class="ba-label">After</div>
           <div class="ba-text">${esc(afterText)}</div>
           <button class="copy-btn" id="${id}" onclick="copyText('${id}', \`${afterText.replace(/`/g,'\\`')}\`)">Copy →</button>
         </div>
       </div>
-      ${item.reason ? `<div class="ba-reason">${esc(item.reason)}</div>` : ''}
+      <div class="ba-reason">${esc(item.reason)}</div>
     </div>
   `;
 }
 
-function upsellWall(mockContent, title, sub, btnText) {
+function upsellWall(title, sub, btnText) {
   return `
-    <div style="position:relative;margin-top:0.5rem;">
-      <div style="filter:blur(5px);pointer-events:none;opacity:0.25;padding-bottom:2rem;">
-        <div class="struct-card"><div class="struct-element">🔒 Locked</div><div class="struct-action">Premium content</div><div class="struct-example">Upgrade to unlock exact fixes...</div></div>
-        <div class="struct-card"><div class="struct-element">🔒 Locked</div><div class="struct-action">Premium content</div><div class="struct-example">Upgrade to unlock exact fixes...</div></div>
-      </div>
-      <div class="upsell-overlay" style="border-radius:10px;">
-        <div class="upsell-title">${title}</div>
-        <div class="upsell-sub">${sub}</div>
-        <button class="upsell-btn" onclick="selectTier('paid', null); document.getElementById('urlInput').focus(); window.scrollTo({top:0,behavior:'smooth'})">${btnText}</button>
-        <div class="upsell-price">One-time · No subscription</div>
+    <div class="upsell-wall" style="position:relative; text-align:center; padding: 2rem; background: rgba(255,255,255,0.05); border-radius: 12px;">
+      <div style="filter:blur(4px); opacity:0.2;">Locked Content Example</div>
+      <div class="upsell-overlay">
+        <div class="upsell-title" style="font-weight:bold; margin-bottom:0.5rem;">${title}</div>
+        <div style="font-size:0.9rem; margin-bottom:1rem; color:var(--muted);">${sub}</div>
+        <button class="upsell-btn" onclick="startPayment()" style="background:var(--primary); color:white; border:none; padding:0.8rem 1.5rem; border-radius:8px; cursor:pointer;">${btnText}</button>
       </div>
     </div>
   `;
@@ -1442,21 +1465,15 @@ function copyText(btnId, text) {
   navigator.clipboard.writeText(text).then(() => {
     const btn = document.getElementById(btnId);
     btn.textContent = 'Copied ✓';
-    btn.classList.add('copied');
-    setTimeout(() => { btn.textContent = 'Copy →'; btn.classList.remove('copied'); }, 2000);
+    setTimeout(() => btn.textContent = 'Copy →', 2000);
   });
 }
 
 function esc(str) {
   if (!str) return '';
-  return String(str)
-    .replace(/&/g,'&amp;')
-    .replace(/</g,'&lt;')
-    .replace(/>/g,'&gt;')
-    .replace(/"/g,'&quot;');
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
-// Enter key support
 document.getElementById('urlInput').addEventListener('keypress', e => {
   if (e.key === 'Enter') startAnalysis();
 });
