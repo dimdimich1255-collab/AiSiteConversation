@@ -1,6 +1,7 @@
 fastapi
 uvicorn
+stripe
+openai
 httpx
 beautifulsoup4
-openai
-stripe
+python-multipart
