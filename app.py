@@ -13,7 +13,31 @@ from pydantic import BaseModel
 import httpx
 from bs4 import BeautifulSoup
 from openai import OpenAI
+import stripe
 
+stripe.api_key = "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"
+
+@app.post("/create-checkout-session")
+async def create_checkout_session():
+    try:
+        session = stripe.checkout.Session.create(
+            payment_method_types=['card'],
+            line_items=[{
+                'price_data': {
+                    'currency': 'usd',
+                    'product_data': {'name': 'Full AI Website Analysis'},
+                    'unit_amount': 700, # Цена в центах (700 = $7)
+                },
+                'quantity': 1,
+            }],
+            mode='payment',
+            # Куда вернуть юзера после оплаты (твоя ссылка на Render)
+            success_url='https://aisiteconversation.onrender.com/?session_id={CHECKOUT_SESSION_ID}',
+            cancel_url='https://aisiteconversation.onrender.com/',
+        )
+        return {"id": session.id}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 app = FastAPI(title="AI Conversion Booster API")
 
 # Настройки CORS
@@ -26,7 +50,7 @@ app.add_middleware(
 )
 
 # Твой ключ OpenAI
-OPENAI_KEY = "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" 
+OPENAI_KEY = "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" 
 client = OpenAI(api_key=OPENAI_KEY)
 
 class AnalyzeRequest(BaseModel):
@@ -104,6 +128,27 @@ async def analyze(request: AnalyzeRequest):
         },
         **analysis
     }
+
+@app.post("/create-checkout-session")
+async def create_checkout_session():
+    try:
+        session = stripe.checkout.Session.create(
+            payment_method_types=['card'],
+            line_items=[{
+                'price_data': {
+                    'currency': 'usd',
+                    'product_data': {'name': 'Full AI Analysis'},
+                    'unit_amount': 700, # Это $7.00
+                },
+                'quantity': 1,
+            }],
+            mode='payment',
+            success_url='https://aisiteconversation.onrender.com/?session_id={CHECKOUT_SESSION_ID}',
+            cancel_url='https://aisiteconversation.onrender.com/',
+        )
+        return {"id": session.id}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 if __name__ == "__main__":
     import uvicorn
